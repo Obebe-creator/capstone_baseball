@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'package:get/get.dart';
 
-/// 하단 탭 화면 구분
+// 하단 탭 화면 구분
 enum Page {
   home, // 0
   history, // 1
   analysis, // 2
+  settings, // 3
 }
 
 class BottomNavController extends GetxController {
@@ -17,7 +18,6 @@ class BottomNavController extends GetxController {
 
   int get index => _pageIndex.value;
 
-  /// BottomNavigationBar onTap → changeIndex 호출
   void changeIndex(int value) {
     final page = Page.values[value];
 
@@ -25,6 +25,7 @@ class BottomNavController extends GetxController {
       case Page.home:
       case Page.history:
       case Page.analysis:
+      case Page.settings:
         _moveToPage(value);
         break;
     }
@@ -34,7 +35,6 @@ class BottomNavController extends GetxController {
   void _moveToPage(int value) {
     if (Platform.isAndroid && _history.last != value) {
       _history.add(value);
-      // print(_history);  // 필요하면 다시 활성화
     }
     _pageIndex(value);
   }

@@ -6,7 +6,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // 세로 모드 고정
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.manual,
+    overlays: SystemUiOverlay.values,
+  );
 
   runApp(const MyApp());
 }

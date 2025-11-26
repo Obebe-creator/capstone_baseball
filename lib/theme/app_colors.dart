@@ -8,4 +8,5 @@ class AppColors {
 
   // Main Color
   static const Color mainColor = Color(0xFF316064); // Transformative Teal
+  static Color bgColor = Color(0xFFFEFEFA);
 }
