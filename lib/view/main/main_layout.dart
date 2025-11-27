@@ -58,8 +58,8 @@ class MainLayout extends GetView<BottomNavController> {
         backgroundColor: AppColors.white,
         selectedItemColor: AppColors.mainColor,
         unselectedItemColor: AppColors.grey,
-        selectedLabelStyle: FontStyles.navi_bold_10,
-        unselectedLabelStyle: FontStyles.navi_bold_10,
+        selectedLabelStyle: FontStyles.KBO_light_10,
+        unselectedLabelStyle: FontStyles.KBO_light_10,
         showSelectedLabels: true,
         showUnselectedLabels: true,
         items: const [
