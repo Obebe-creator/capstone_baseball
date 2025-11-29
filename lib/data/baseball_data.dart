@@ -23,6 +23,7 @@ class BaseballData {
     Stadium(id: 'SUWON', name: '수원 KT 위즈 파크', city: '수원'),
     Stadium(id: 'DAEGU', name: '대구 삼성 라이온즈 파크', city: '대구'),
     Stadium(id: 'BUSAN', name: '사직야구장', city: '부산'),
+    Stadium(id: 'GWANGJU', name: '광주-기아 챔피언스필드', city: '광주'),
     // 필요하면 더 추가
   ];
 }
