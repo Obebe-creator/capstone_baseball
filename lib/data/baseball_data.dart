@@ -24,6 +24,8 @@ class BaseballData {
     Stadium(id: 'DAEGU', name: '대구 삼성 라이온즈 파크', city: '대구'),
     Stadium(id: 'BUSAN', name: '사직야구장', city: '부산'),
     Stadium(id: 'GWANGJU', name: '광주-기아 챔피언스필드', city: '광주'),
-    // 필요하면 더 추가
+    Stadium(id: 'DAEJEON', name: '대전 한화생명볼파크', city: '대전'),
+    Stadium(id: 'INCHEON', name: '인천SSG 랜더스필드', city: '인천'),
+    Stadium(id: 'CHANGWON', name: '창원NC파크', city: '창원'),
   ];
 }
