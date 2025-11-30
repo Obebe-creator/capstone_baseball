@@ -22,13 +22,13 @@ class RecordMain extends GetView<RecordController> {
           children: [
             _title(),
             SizedBox(height: 16.h),
-            _infoCard(),
+            _infoCard(context),
             SizedBox(height: 16.h),
             _resultCard(),
             SizedBox(height: 16.h),
             _diaryCard(),
             SizedBox(height: 24.h),
-            _saveButton(),
+            _saveButton(context),
           ],
         ),
       ),
@@ -39,12 +39,12 @@ class RecordMain extends GetView<RecordController> {
   Widget _title() {
     return Text(
       '오늘의 경기 기록',
-      style: FontStyles.KBO_medium_13.copyWith(color: AppColors.grey_title),
+      style: FontStyles.KBO_bold_13.copyWith(color: AppColors.grey_title),
     );
   }
 
-  // ---------- 직관 정보 카드 ----------
-  Widget _infoCard() {
+  // MARK: - 직관 정보 카드
+  Widget _infoCard(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(16.w),
@@ -69,18 +69,19 @@ class RecordMain extends GetView<RecordController> {
           Obx(
             () => GestureDetector(
               onTap: () async {
-                final now = controller.selectedDate.value;
                 final picked = await showDatePicker(
-                  context: Get.context!,
-                  initialDate: now,
+                  context: context,
+                  initialDate: controller.selectedDate.value,
                   firstDate: DateTime(2020),
                   lastDate: DateTime(2030),
                   locale: const Locale('ko', 'KR'),
                 );
+
                 if (picked != null) {
                   controller.selectedDate.value = picked;
                 }
               },
+
               child: Container(
                 height: 40.h,
                 padding: EdgeInsets.symmetric(horizontal: 12.w),
@@ -295,8 +296,8 @@ class RecordMain extends GetView<RecordController> {
     );
   }
 
-  // ---------- 저장 버튼 ----------
-  Widget _saveButton() {
+  // MARK: - 저장 버튼
+  Widget _saveButton(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       height: 48.h,
@@ -310,13 +311,13 @@ class RecordMain extends GetView<RecordController> {
         onPressed: controller.saveRecord,
         child: Text(
           '기록 저장',
-          style: FontStyles.KBO_medium_13.copyWith(color: AppColors.white),
+          style: FontStyles.KBO_bold_13.copyWith(color: AppColors.white),
         ),
       ),
     );
   }
 
-  // ---------- 공통 위젯 ----------
+  // MARK: - 공통 위젯
   Widget _fieldLabel(String text) {
     return Text(
       text,

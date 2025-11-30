@@ -74,6 +74,13 @@ class FontStyles {
     height: 1.2.h,
   );
 
+  static TextStyle KBO_bold_13 = TextStyle(
+    fontFamily: 'KBODiaGothic B',
+    fontSize: 13.sp,
+    // fontWeight: FontWeight.bold,
+    height: 1.2.h,
+  );
+
   static TextStyle KBO_bold_17 = TextStyle(
     fontFamily: 'KBODiaGothic B',
     fontSize: 17.sp,

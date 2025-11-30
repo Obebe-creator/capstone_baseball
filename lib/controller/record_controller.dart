@@ -1,10 +1,16 @@
 import 'package:capstone_baseball/data/baseball_data.dart';
+import 'package:capstone_baseball/model/game_record.dart';
 import 'package:capstone_baseball/model/stadium.dart';
 import 'package:capstone_baseball/model/team.dart';
+import 'package:capstone_baseball/service/record_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class RecordController extends GetxController {
+  final RecordService recordService;
+
+  RecordController(this.recordService);
+
   // 선택된 값
   final selectedDate = DateTime.now().obs;
   final myTeam = BaseballData.teams.first.obs;
@@ -25,14 +31,32 @@ class RecordController extends GetxController {
 
   // 나중에 RecordService 연동하기 전까지 임시 저장/디버그 용도
   void saveRecord() {
-    debugPrint('---- Record Saved ----');
-    debugPrint('날짜: $selectedDate');
-    debugPrint('경기장: ${selectedStadium.value.name}');
-    debugPrint('응원팀: ${myTeam.value.shortName}');
-    debugPrint('상대팀: ${opponentTeam.value.shortName}');
-    debugPrint('스코어: ${myScore.value} : ${opponentScore.value}');
-    debugPrint('취소 여부: ${isCancelled.value}');
-    debugPrint('일기: ${diaryController.text}');
+    final record = GameRecord(
+      date: selectedDate.value,
+      stadium: selectedStadium.value,
+      myTeam: myTeam.value,
+      opponentTeam: opponentTeam.value,
+      myScore: myScore.value,
+      opponentScore: opponentScore.value,
+      isCancelled: isCancelled.value,
+      diary: diaryController.text,
+    );
+    recordService.addRecord(record);
+  }
+
+  // 초기화
+  void resetForm() {
+    selectedDate.value = DateTime.now();
+    selectedStadium.value = stadiumOptions.first;
+    myTeam.value = teamOptions.first;
+    opponentTeam.value = teamOptions.length > 1
+        ? teamOptions[1]
+        : teamOptions.first;
+
+    myScore.value = 0;
+    opponentScore.value = 0;
+    isCancelled.value = false;
+    diaryController.clear();
   }
 
   @override
