@@ -3,6 +3,7 @@ import 'package:capstone_baseball/model/game_record.dart';
 import 'package:capstone_baseball/model/stadium.dart';
 import 'package:capstone_baseball/model/team.dart';
 import 'package:capstone_baseball/service/record_service.dart';
+import 'package:capstone_baseball/utils/helper/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -29,8 +30,8 @@ class RecordController extends GetxController {
   List<Team> get teamOptions => BaseballData.teams;
   List<Stadium> get stadiumOptions => BaseballData.stadiums;
 
-  // 나중에 RecordService 연동하기 전까지 임시 저장/디버그 용도
-  void saveRecord() {
+  //
+  Future<void> saveRecord() async {
     final record = GameRecord(
       date: selectedDate.value,
       stadium: selectedStadium.value,
@@ -41,7 +42,18 @@ class RecordController extends GetxController {
       isCancelled: isCancelled.value,
       diary: diaryController.text,
     );
-    recordService.addRecord(record);
+
+    // 저장
+    await recordService.addRecord(record);
+
+    logger.i('---- Record Saved ----');
+    logger.i('Date: ${record.date}');
+    logger.i('Stadium: ${record.stadium.name}');
+    logger.i('Cheering Team: ${record.myTeam.shortName}');
+    logger.i('Opponent: ${record.opponentTeam.shortName}');
+    logger.i('Score: ${record.myScore} : ${record.opponentScore}');
+    logger.i('Cancel: ${record.isCancelled}');
+    logger.i('Diary: ${record.diary}');
   }
 
   // 초기화

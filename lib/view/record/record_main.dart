@@ -308,7 +308,28 @@ class RecordMain extends GetView<RecordController> {
             borderRadius: BorderRadius.circular(8.r),
           ),
         ),
-        onPressed: controller.saveRecord,
+        onPressed: () async {
+          await controller.saveRecord(); // 저장은 컨트롤러가
+          controller.resetForm(); // 초기화도 컨트롤러가
+
+          // UI는 여기(View)가 담당
+          await showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+              title: Text('저장 완료', style: FontStyles.KBO_medium_13),
+              content: Text('기록이 저장되었습니다.', style: FontStyles.KBO_medium_13),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('확인', style: FontStyles.KBO_medium_13),
+                ),
+              ],
+            ),
+          );
+        },
         child: Text(
           '기록 저장',
           style: FontStyles.KBO_bold_13.copyWith(color: AppColors.white),
