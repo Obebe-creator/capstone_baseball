@@ -1,4 +1,5 @@
 import 'package:capstone_baseball/controller/record_controller.dart';
+import 'package:capstone_baseball/model/game_emotion.dart';
 import 'package:capstone_baseball/model/stadium.dart';
 import 'package:capstone_baseball/model/team.dart';
 import 'package:capstone_baseball/theme/app_colors.dart';
@@ -169,7 +170,7 @@ class RecordMain extends GetView<RecordController> {
     );
   }
 
-  // ---------- 경기 결과 카드 ----------
+  // MARR: - 경기 결과 카드
   Widget _resultCard() {
     return Container(
       width: double.infinity,
@@ -188,6 +189,35 @@ class RecordMain extends GetView<RecordController> {
             ),
           ),
           SizedBox(height: 12.h),
+
+          // ✅ 오늘 기분
+          _fieldLabel('오늘 기분'),
+          SizedBox(height: 8.h),
+          Obx(
+            () => Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _emotionChip(
+                  GameEmotion.veryHappy,
+                  '최고',
+                  Icons.sentiment_very_satisfied,
+                ),
+                _emotionChip(
+                  GameEmotion.happy,
+                  '좋음',
+                  Icons.sentiment_satisfied,
+                ),
+                _emotionChip(GameEmotion.soso, '아쉬움', Icons.sentiment_neutral),
+                _emotionChip(
+                  GameEmotion.sad,
+                  '최악',
+                  Icons.sentiment_dissatisfied,
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(height: 16.h),
 
           _fieldLabel('스코어'),
           SizedBox(height: 4.h),
@@ -250,7 +280,7 @@ class RecordMain extends GetView<RecordController> {
     );
   }
 
-  // ---------- 오늘의 경기 일기 ----------
+  // MARK: - 오늘의 경기 일기
   Widget _diaryCard() {
     return Container(
       width: double.infinity,
@@ -410,6 +440,39 @@ class RecordMain extends GetView<RecordController> {
           visualDensity: VisualDensity.compact,
         ),
       ],
+    );
+  }
+
+  // 감정 선택
+  Widget _emotionChip(GameEmotion type, String label, IconData icon) {
+    final isSelected = controller.emotion.value == type;
+
+    return GestureDetector(
+      onTap: () => controller.setEmotion(type),
+      child: Column(
+        children: [
+          Container(
+            width: 40.w,
+            height: 40.w,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isSelected ? AppColors.mainColor : AppColors.grey_01,
+            ),
+            child: Icon(
+              icon,
+              size: 22,
+              color: isSelected ? AppColors.white : AppColors.grey_04,
+            ),
+          ),
+          SizedBox(height: 4.h),
+          Text(
+            label,
+            style: FontStyles.KBO_medium_8.copyWith(
+              color: isSelected ? AppColors.mainColor : AppColors.grey_04,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

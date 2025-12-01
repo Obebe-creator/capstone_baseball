@@ -1,5 +1,6 @@
 import 'package:capstone_baseball/data/baseball_data.dart';
 import 'package:capstone_baseball/model/game_record.dart';
+import 'package:capstone_baseball/model/game_emotion.dart';
 import 'package:capstone_baseball/model/stadium.dart';
 import 'package:capstone_baseball/model/team.dart';
 import 'package:capstone_baseball/service/record_service.dart';
@@ -26,9 +27,16 @@ class RecordController extends GetxController {
   // 오늘의 경기 일기
   final TextEditingController diaryController = TextEditingController();
 
+  // 감정
+  final Rx<GameEmotion> emotion = GameEmotion.happy.obs;
+
   // 옵션 리스트
   List<Team> get teamOptions => BaseballData.teams;
   List<Stadium> get stadiumOptions => BaseballData.stadiums;
+
+  void setEmotion(GameEmotion e) {
+    emotion.value = e;
+  }
 
   //
   Future<void> saveRecord() async {
@@ -41,6 +49,7 @@ class RecordController extends GetxController {
       opponentScore: opponentScore.value,
       isCancelled: isCancelled.value,
       diary: diaryController.text,
+      emotion: emotion.value,
     );
 
     // 저장
@@ -54,6 +63,7 @@ class RecordController extends GetxController {
     logger.i('Score: ${record.myScore} : ${record.opponentScore}');
     logger.i('Cancel: ${record.isCancelled}');
     logger.i('Diary: ${record.diary}');
+    logger.i('Emotion: ${record.emotion}');
   }
 
   // 초기화
@@ -69,6 +79,7 @@ class RecordController extends GetxController {
     opponentScore.value = 0;
     isCancelled.value = false;
     diaryController.clear();
+    emotion.value = GameEmotion.happy;
   }
 
   @override

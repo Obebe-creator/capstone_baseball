@@ -1,4 +1,5 @@
 import 'package:capstone_baseball/data/baseball_data.dart';
+import 'package:capstone_baseball/model/game_emotion.dart';
 import 'package:capstone_baseball/model/stadium.dart';
 import 'package:capstone_baseball/model/team.dart';
 
@@ -11,6 +12,7 @@ class GameRecord {
   final int opponentScore;
   final bool isCancelled;
   final String diary;
+  final GameEmotion emotion;
 
   const GameRecord({
     required this.date,
@@ -21,6 +23,7 @@ class GameRecord {
     required this.opponentScore,
     required this.isCancelled,
     required this.diary,
+    required this.emotion,
   });
 
   // JSON 변환 (나중에 SharedPreferences 쓸 때 사용)
@@ -33,6 +36,7 @@ class GameRecord {
     'opponentScore': opponentScore,
     'isCancelled': isCancelled,
     'diary': diary,
+    'emotion': emotion.name,
   };
 
   factory GameRecord.fromJson(Map<String, dynamic> json) {
@@ -49,6 +53,13 @@ class GameRecord {
       orElse: () => BaseballData.teams.first,
     );
 
+    // ✅ 문자열 → enum
+    final emotionStr = json['emotion'] as String?;
+    final emotion = GameEmotion.values.firstWhere(
+      (e) => e.name == emotionStr,
+      orElse: () => GameEmotion.happy, // 없으면 기본값
+    );
+
     return GameRecord(
       date: DateTime.parse(json['date'] as String),
       stadium: stadium,
@@ -58,6 +69,7 @@ class GameRecord {
       opponentScore: json['opponentScore'] as int,
       isCancelled: json['isCancelled'] as bool,
       diary: json['diary'] as String,
+      emotion: emotion,
     );
   }
 }

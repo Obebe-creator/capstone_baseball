@@ -10,6 +10,7 @@ class ImagePaths {
   static String get ncLogo => 'assets/images/nc_logo.png';
   static String get kiwoomLogo => 'assets/images/kiwoom_logo.png';
   static String get hanwhaLogo => 'assets/images/hanwha_logo.png';
+  static String get lgLogo => 'assets/images/lg_logo.png';
 
   // MARK: Bot_nav_icon
   static String get navCalendar => 'assets/images/calendar-check.png';
