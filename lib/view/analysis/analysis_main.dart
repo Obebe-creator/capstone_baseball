@@ -2,6 +2,7 @@ import 'package:capstone_baseball/controller/analysis_controller.dart';
 import 'package:capstone_baseball/model/game_record.dart';
 import 'package:capstone_baseball/theme/app_colors.dart';
 import 'package:capstone_baseball/theme/font_styles.dart';
+import 'package:capstone_baseball/view/analysis/analysis_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -70,7 +71,7 @@ class AnalysisMain extends GetView<AnalysisController> {
               TextButton(
                 onPressed: () {
                   // TODO: 상세 통계 페이지로 이동
-                  // Get.to(() => const AnalysisDetailPage());
+                  Get.to(() => const AnalysisDetailPage());
                 },
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.zero,
@@ -81,7 +82,7 @@ class AnalysisMain extends GetView<AnalysisController> {
                   children: [
                     Text(
                       '상세보기',
-                      style: FontStyles.KBO_medium_11.copyWith(
+                      style: FontStyles.KBO_medium_12.copyWith(
                         color: AppColors.grey_04,
                       ),
                     ),
