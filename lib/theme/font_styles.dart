@@ -45,6 +45,13 @@ class FontStyles {
     height: 1.2.h,
   );
 
+  static TextStyle KBO_medium_11 = TextStyle(
+    fontFamily: 'KBODiaGothic M',
+    fontSize: 11.sp,
+
+    height: 1.2.h,
+  );
+
   static TextStyle KBO_medium_12 = TextStyle(
     fontFamily: 'KBODiaGothic M',
     fontSize: 12.sp,

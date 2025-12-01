@@ -1,3 +1,4 @@
+import 'package:capstone_baseball/controller/analysis_controller.dart';
 import 'package:capstone_baseball/controller/bottom_nav_controller.dart';
 import 'package:capstone_baseball/controller/home_controller.dart';
 import 'package:capstone_baseball/controller/record_controller.dart';
@@ -14,5 +15,6 @@ class MainBindings implements Bindings {
     Get.put<RecordService>(RecordService());
     Get.put<SettingController>(SettingController());
     Get.put<RecordController>(RecordController(Get.find<RecordService>()));
+    Get.put<AnalysisController>(AnalysisController(Get.find<RecordService>()));
   }
 }
