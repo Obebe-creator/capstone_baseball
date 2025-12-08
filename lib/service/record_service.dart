@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:capstone_baseball/data/dummy_records.dart';
 import 'package:capstone_baseball/model/game_record.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,7 +16,33 @@ class RecordService extends GetxService {
   @override
   void onInit() {
     super.onInit();
-    _loadFromStorage();
+    _init();
+  }
+
+  Future<void> _init() async {
+    await _loadFromStorage();
+
+    // 저장된 데이터 여부와 상관 없이 dummyRecords 추가
+    _mergeDummyData();
+
+    // 전체 저장
+    await _saveToStorage();
+  }
+
+  void _mergeDummyData() {
+    for (final dummy in dummyRecords) {
+      final exists = records.any(
+        (r) =>
+            r.date.year == dummy.date.year &&
+            r.date.month == dummy.date.month &&
+            r.date.day == dummy.date.day &&
+            r.opponentTeam.id == dummy.opponentTeam.id,
+      );
+
+      if (!exists) {
+        records.add(dummy);
+      }
+    }
   }
 
   /// SharedPreferences 인스턴스 가져오기 (lazy)
@@ -83,7 +110,20 @@ class RecordService extends GetxService {
     await _saveAll(); // 내부에 저장용 메서드 (SharedPreferences, DB 등)
   }
 
+  Future<GameRecord> updateDiary(GameRecord target, String newDiary) async {
+    final index = records.indexOf(target);
+    if (index == -1) return target; // 못 찾으면 그냥 원본 반환
+
+    final old = records[index];
+    final updated = old.copyWith(diary: newDiary);
+
+    records[index] = updated;
+    await _saveToStorage(); // 또는 _saveAll()
+
+    return updated;
+  }
+
   Future<void> _saveAll() async {
-    // TODO: records 전체를 로컬에 저장하는 로직
+    await _saveToStorage();
   }
 }

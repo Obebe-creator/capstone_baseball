@@ -166,7 +166,8 @@ class AnalysisMain extends GetView<AnalysisController> {
       }
 
       // 최신 경기 먼저
-      final sorted = records.reversed.toList();
+      final sorted = [...records]
+        ..sort((a, b) => b.date.compareTo(a.date)); // 최신 날짜가 먼저 오도록 정렬
 
       return ListView.separated(
         shrinkWrap: true,

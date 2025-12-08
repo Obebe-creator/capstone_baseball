@@ -26,6 +26,31 @@ class GameRecord {
     required this.emotion,
   });
 
+  /// ✅ 일부 필드만 바꾼 새 GameRecord 만들기
+  GameRecord copyWith({
+    DateTime? date,
+    Stadium? stadium,
+    Team? myTeam,
+    Team? opponentTeam,
+    int? myScore,
+    int? opponentScore,
+    bool? isCancelled,
+    String? diary,
+    GameEmotion? emotion,
+  }) {
+    return GameRecord(
+      date: date ?? this.date,
+      stadium: stadium ?? this.stadium,
+      myTeam: myTeam ?? this.myTeam,
+      opponentTeam: opponentTeam ?? this.opponentTeam,
+      myScore: myScore ?? this.myScore,
+      opponentScore: opponentScore ?? this.opponentScore,
+      isCancelled: isCancelled ?? this.isCancelled,
+      diary: diary ?? this.diary,
+      emotion: emotion ?? this.emotion,
+    );
+  }
+
   // JSON 변환 (나중에 SharedPreferences 쓸 때 사용)
   Map<String, dynamic> toJson() => {
     'date': date.toIso8601String(),
@@ -53,11 +78,11 @@ class GameRecord {
       orElse: () => BaseballData.teams.first,
     );
 
-    // ✅ 문자열 → enum
+    // 문자열 → enum
     final emotionStr = json['emotion'] as String?;
     final emotion = GameEmotion.values.firstWhere(
       (e) => e.name == emotionStr,
-      orElse: () => GameEmotion.happy, // 없으면 기본값
+      orElse: () => GameEmotion.happy,
     );
 
     return GameRecord(

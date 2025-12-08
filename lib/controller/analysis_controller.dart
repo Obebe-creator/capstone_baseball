@@ -96,6 +96,6 @@ class AnalysisController extends GetxController {
   }
 
   void editRecord(GameRecord record) {
-    Get.to(() => RecordEditPage(record: record));
+    Get.off(() => RecordEditPage(record: record));
   }
 }
