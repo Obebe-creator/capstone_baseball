@@ -38,6 +38,8 @@ class AnalysisDetailPage extends GetView<AnalysisController> {
           _overallWinRateSection(),
           SizedBox(height: 24.h),
           _opponentSection(),
+          SizedBox(height: 24.h), // ← 간격
+          _recordListSection(), // ← 새 섹션
         ],
       ),
     );
@@ -295,6 +297,151 @@ class AnalysisDetailPage extends GetView<AnalysisController> {
     list.sort((a, b) => a.team.shortName.compareTo(b.team.shortName));
 
     return list;
+  }
+
+  // MARK: - 직관 기록 목록 섹션
+  Widget _recordListSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '직관 기록 목록',
+          style: FontStyles.KBO_medium_13.copyWith(color: AppColors.grey_title),
+        ),
+        SizedBox(height: 4.h),
+        Text(
+          '승률에 반영되는 개별 직관 기록들을 관리할 수 있어요.',
+          style: FontStyles.KBO_medium_11.copyWith(color: AppColors.grey_04),
+        ),
+        SizedBox(height: 12.h),
+        Obx(() {
+          final records = controller.records;
+
+          if (records.isEmpty) {
+            return Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 32.h, horizontal: 16.w),
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Text(
+                '아직 직관 기록이 없습니다.\n기록 탭에서 첫 직관을 기록해 보세요!',
+                style: FontStyles.KBO_medium_13.copyWith(
+                  color: AppColors.grey_04,
+                ),
+              ),
+            );
+          }
+
+          return Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(12.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: records.length,
+              separatorBuilder: (_, __) =>
+                  Divider(height: 1, thickness: 0.5, color: AppColors.grey_01),
+              itemBuilder: (_, index) {
+                final record = records[index];
+                return _recordRow(record);
+              },
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  // MARK: - 직관 기록 한 줄 UI (수정/삭제 아이콘 포함)
+  Widget _recordRow(GameRecord record) {
+    // GameRecord에 DateTime date 필드 있다고 가정
+    final date = record.date;
+    final dateText =
+        '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}';
+
+    final myTeamName = record.myTeam.shortName;
+    final oppTeamName = record.opponentTeam.shortName;
+    final resultLabel = controller.getResultLabel(record); // 승/패/무/취소
+
+    final scoreText = record.isCancelled
+        ? '경기 취소'
+        : '${record.myScore} : ${record.opponentScore} ($resultLabel)';
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+      child: Row(
+        children: [
+          // 왼쪽: 날짜 + 매치 정보 + 스코어
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  dateText,
+                  style: FontStyles.KBO_medium_11.copyWith(
+                    color: AppColors.grey_04,
+                  ),
+                ),
+                SizedBox(height: 2.h),
+                Text(
+                  '$myTeamName vs $oppTeamName',
+                  style: FontStyles.KBO_medium_13.copyWith(
+                    color: AppColors.grey_title,
+                  ),
+                ),
+                SizedBox(height: 2.h),
+                Text(
+                  scoreText,
+                  style: FontStyles.KBO_medium_11.copyWith(
+                    color: AppColors.mainColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // 오른쪽: 수정 / 삭제 아이콘
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.zero,
+                icon: Icon(
+                  Icons.edit_outlined,
+                  size: 18.w,
+                  color: AppColors.grey_04,
+                ),
+                onPressed: () => controller.editRecord(record),
+              ),
+              SizedBox(width: 4.w),
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.zero,
+                icon: Icon(
+                  Icons.delete_outline,
+                  size: 18.w,
+                  color: AppColors.grey_04,
+                ),
+                onPressed: () => controller.deleteRecord(record),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
 

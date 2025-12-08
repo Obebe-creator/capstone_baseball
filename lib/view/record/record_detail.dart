@@ -1,11 +1,13 @@
+import 'package:capstone_baseball/controller/analysis_controller.dart';
 import 'package:capstone_baseball/model/game_record.dart';
 import 'package:capstone_baseball/model/game_emotion.dart';
 import 'package:capstone_baseball/theme/app_colors.dart';
 import 'package:capstone_baseball/theme/font_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_state_manager/src/simple/get_view.dart';
 
-class RecordDetailPage extends StatelessWidget {
+class RecordDetailPage extends GetView<AnalysisController> {
   final GameRecord record;
 
   const RecordDetailPage({super.key, required this.record});
@@ -23,6 +25,15 @@ class RecordDetailPage extends StatelessWidget {
           style: FontStyles.KBO_bold_13.copyWith(color: AppColors.grey_title),
         ),
         centerTitle: true,
+
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit_outlined),
+            color: AppColors.grey_title,
+            onPressed: () => controller.editRecord(record),
+          ),
+          SizedBox(width: 8.w),
+        ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
@@ -37,6 +48,31 @@ class RecordDetailPage extends StatelessWidget {
             SizedBox(height: 16.h),
             _diaryCard(),
           ],
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 16.h),
+          child: SizedBox(
+            height: 48.h,
+            width: double.infinity,
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: AppColors.white,
+                side: BorderSide(color: AppColors.grey_03),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+              ),
+              onPressed: () => controller.deleteRecord(record),
+              child: Text(
+                '이 기록 삭제',
+                style: FontStyles.KBO_medium_13.copyWith(
+                  color: AppColors.grey_05,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

@@ -77,4 +77,13 @@ class RecordService extends GetxService {
     final prefs = await _getPrefs();
     await prefs.remove(_storageKey);
   }
+
+  Future<void> deleteRecord(GameRecord record) async {
+    records.remove(record); // RxList 변경
+    await _saveAll(); // 내부에 저장용 메서드 (SharedPreferences, DB 등)
+  }
+
+  Future<void> _saveAll() async {
+    // TODO: records 전체를 로컬에 저장하는 로직
+  }
 }
