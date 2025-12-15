@@ -412,33 +412,33 @@ class AnalysisDetailPage extends GetView<AnalysisController> {
             ),
           ),
 
-          // 오른쪽: 수정 / 삭제 아이콘
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                visualDensity: VisualDensity.compact,
-                padding: EdgeInsets.zero,
-                icon: Icon(
-                  Icons.edit_outlined,
-                  size: 18.w,
-                  color: AppColors.grey_04,
-                ),
-                onPressed: () => controller.editRecord(record),
-              ),
-              SizedBox(width: 4.w),
-              IconButton(
-                visualDensity: VisualDensity.compact,
-                padding: EdgeInsets.zero,
-                icon: Icon(
-                  Icons.delete_outline,
-                  size: 18.w,
-                  color: AppColors.grey_04,
-                ),
-                onPressed: () => controller.deleteRecord(record),
-              ),
-            ],
-          ),
+          // MARK: 오른쪽: 수정 / 삭제 아이콘
+          // Row(
+          //   mainAxisSize: MainAxisSize.min,
+          //   children: [
+          //     IconButton(
+          //       visualDensity: VisualDensity.compact,
+          //       padding: EdgeInsets.zero,
+          //       icon: Icon(
+          //         Icons.edit_outlined,
+          //         size: 18.w,
+          //         color: AppColors.grey_04,
+          //       ),
+          //       onPressed: () => controller.editRecord(record),
+          //     ),
+          //     SizedBox(width: 4.w),
+          //     IconButton(
+          //       visualDensity: VisualDensity.compact,
+          //       padding: EdgeInsets.zero,
+          //       icon: Icon(
+          //         Icons.delete_outline,
+          //         size: 18.w,
+          //         color: AppColors.grey_04,
+          //       ),
+          //       onPressed: () => controller.deleteRecord(record),
+          //     ),
+          //   ],
+          // ),
         ],
       ),
     );
