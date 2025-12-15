@@ -7,9 +7,119 @@ import 'package:capstone_baseball/theme/font_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:flutter/rendering.dart';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:capstone_baseball/view/analysis/widgets/analysis_share_card.dart';
 
 class AnalysisDetailPage extends GetView<AnalysisController> {
   const AnalysisDetailPage({super.key});
+
+  static final GlobalKey _shareKey = GlobalKey();
+
+  Future<Uint8List> _captureShareCardPng() async {
+    final boundary =
+        _shareKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    final ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    return byteData!.buffer.asUint8List();
+  }
+
+  void _openShareCardDialog({
+    required String teamName,
+    String? teamLogoAsset,
+    required int total,
+    required int win,
+    required int lose,
+    required int draw,
+    required int cancel,
+  }) {
+    Get.dialog(
+      Dialog(
+        insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '공유 카드 미리보기',
+                style: FontStyles.KBO_bold_15.copyWith(
+                  color: AppColors.grey_title,
+                ),
+              ),
+              SizedBox(height: 12.h),
+
+              RepaintBoundary(
+                key: _shareKey,
+                child: AnalysisShareCard(
+                  teamName: teamName,
+                  teamLogoAsset: teamLogoAsset, // 없으면 null 유지
+                  total: total,
+                  win: win,
+                  lose: lose,
+                ),
+              ),
+
+              SizedBox(height: 10.h),
+              Text(
+                '총 ${total + cancel}경기 (취소 $cancel경기 포함) · $win승 $lose패 $draw무',
+                style: FontStyles.KBO_medium_11.copyWith(
+                  color: AppColors.grey_04,
+                ),
+              ),
+              SizedBox(height: 16.h),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Get.back(),
+                      child: Text(
+                        '닫기',
+                        style: FontStyles.KBO_bold_13.copyWith(
+                          color: AppColors.grey_title,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10.w),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.mainColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                      ),
+                      onPressed: () async {
+                        // ✅ 오늘은 "이미지 생성"까지만 해도 발표용 OK
+                        final bytes = await _captureShareCardPng();
+                        Get.snackbar(
+                          '완료',
+                          '이미지 생성 성공 (${bytes.lengthInBytes} bytes)',
+                        );
+                        // TODO: share_plus / gallery 저장 연결 가능
+                      },
+                      child: Text(
+                        '이미지 생성',
+                        style: FontStyles.KBO_bold_13.copyWith(
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +157,8 @@ class AnalysisDetailPage extends GetView<AnalysisController> {
 
   // MARK: - 전체 직관 승률 섹션
   Widget _overallWinRateSection() {
+    final settingController = Get.find<SettingController>();
+
     return Obx(() {
       final winRate = controller.winRate; // 0 ~ 100
       final played = controller.playedCount;
@@ -54,6 +166,9 @@ class AnalysisDetailPage extends GetView<AnalysisController> {
       final lose = controller.loseCount;
       final draw = controller.drawCount;
       final cancel = controller.cancelCount;
+
+      final favorite = settingController.selectedTeam; // 응원팀
+      final teamName = favorite?.shortName ?? '응원팀';
 
       return Container(
         width: double.infinity,
@@ -81,30 +196,82 @@ class AnalysisDetailPage extends GetView<AnalysisController> {
             SizedBox(height: 12.h),
 
             // 승률 + 전적
+            // ✅ 승률 + 전적 + (오른쪽) 카드로 보기 버튼
             Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  played == 0 ? '--%' : '${winRate.toStringAsFixed(0)}%',
-                  style: FontStyles.KBO_bold_17.copyWith(
-                    color: AppColors.mainColor,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            played == 0
+                                ? '--%'
+                                : '${winRate.toStringAsFixed(0)}%',
+                            style: FontStyles.KBO_bold_17.copyWith(
+                              color: AppColors.mainColor,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          Text(
+                            '$win승 $lose패 $draw무',
+                            style: FontStyles.KBO_medium_13.copyWith(
+                              color: AppColors.grey_title,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 4.h),
+                      Text(
+                        '총 ${played + cancel}경기 (취소 $cancel경기 포함)',
+                        style: FontStyles.KBO_medium_11.copyWith(
+                          color: AppColors.grey_04,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(width: 8.w),
-                Text(
-                  '$win승 $lose패 $draw무',
-                  style: FontStyles.KBO_medium_13.copyWith(
-                    color: AppColors.grey_title,
+
+                SizedBox(width: 12.w),
+
+                SizedBox(
+                  width: 62.w,
+                  height: 28.h,
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: AppColors.mainColor, width: 1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      padding: EdgeInsets.zero,
+                    ),
+                    onPressed: favorite == null
+                        ? null
+                        : () {
+                            _openShareCardDialog(
+                              teamName: teamName,
+                              teamLogoAsset: null, // 로고 asset 있으면 넣기
+                              total: played,
+                              win: win,
+                              lose: lose,
+                              draw: draw,
+                              cancel: cancel,
+                            );
+                          },
+                    child: Text(
+                      '카드로 보기',
+                      style: FontStyles.KBO_bold_10.copyWith(
+                        color: favorite == null
+                            ? AppColors.grey_04
+                            : AppColors.mainColor,
+                      ),
+                    ),
                   ),
                 ),
               ],
-            ),
-            SizedBox(height: 4.h),
-            Text(
-              '총 ${played + cancel}경기 (취소 $cancel경기 포함)',
-              style: FontStyles.KBO_medium_11.copyWith(
-                color: AppColors.grey_04,
-              ),
             ),
           ],
         ),
@@ -411,34 +578,6 @@ class AnalysisDetailPage extends GetView<AnalysisController> {
               ],
             ),
           ),
-
-          // MARK: 오른쪽: 수정 / 삭제 아이콘
-          // Row(
-          //   mainAxisSize: MainAxisSize.min,
-          //   children: [
-          //     IconButton(
-          //       visualDensity: VisualDensity.compact,
-          //       padding: EdgeInsets.zero,
-          //       icon: Icon(
-          //         Icons.edit_outlined,
-          //         size: 18.w,
-          //         color: AppColors.grey_04,
-          //       ),
-          //       onPressed: () => controller.editRecord(record),
-          //     ),
-          //     SizedBox(width: 4.w),
-          //     IconButton(
-          //       visualDensity: VisualDensity.compact,
-          //       padding: EdgeInsets.zero,
-          //       icon: Icon(
-          //         Icons.delete_outline,
-          //         size: 18.w,
-          //         color: AppColors.grey_04,
-          //       ),
-          //       onPressed: () => controller.deleteRecord(record),
-          //     ),
-          //   ],
-          // ),
         ],
       ),
     );
