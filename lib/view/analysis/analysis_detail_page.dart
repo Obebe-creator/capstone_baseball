@@ -18,8 +18,11 @@ class AnalysisDetailPage extends GetView<AnalysisController> {
   static final GlobalKey _shareKey = GlobalKey();
 
   Future<Uint8List> _captureShareCardPng() async {
+    await Future.delayed(const Duration(milliseconds: 80));
+
     final boundary =
         _shareKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+
     final ui.Image image = await boundary.toImage(pixelRatio: 3.0);
     final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     return byteData!.buffer.asUint8List();
@@ -96,13 +99,15 @@ class AnalysisDetailPage extends GetView<AnalysisController> {
                         ),
                       ),
                       onPressed: () async {
-                        // ✅ 오늘은 "이미지 생성"까지만 해도 발표용 OK
-                        final bytes = await _captureShareCardPng();
-                        Get.snackbar(
-                          '완료',
-                          '이미지 생성 성공 (${bytes.lengthInBytes} bytes)',
-                        );
-                        // TODO: share_plus / gallery 저장 연결 가능
+                        try {
+                          final bytes = await _captureShareCardPng();
+                          Get.snackbar(
+                            '완료',
+                            '이미지 생성 성공 (${bytes.lengthInBytes} bytes)',
+                          );
+                        } catch (e) {
+                          Get.snackbar('실패', '이미지 생성 실패: $e');
+                        }
                       },
                       child: Text(
                         '이미지 생성',
@@ -127,6 +132,7 @@ class AnalysisDetailPage extends GetView<AnalysisController> {
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
         backgroundColor: AppColors.bgColor,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
         title: Text(
